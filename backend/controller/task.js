@@ -38,7 +38,7 @@ module.exports.GetAllTask = async (req, res) => {
 module.exports.UpdateTask = async (req, res) => {
   try {
     const { taskId } = req.params;
-    const { title, description, status, completedAt } = req.body;
+    const { title, description, status } = req.body;
 
     const task = await Task.findById(taskId).populate("project");
     if (!task || String(task.project.user) !== String(req.user._id)) {
@@ -48,7 +48,12 @@ module.exports.UpdateTask = async (req, res) => {
     task.title = title ?? task.title;
     task.description = description ?? task.description;
     task.status = status ?? task.status;
-    task.completedAt = completedAt ?? task.completedAt;
+
+    if (status === "Completed") {
+      task.completedAt = new Date();
+    } else {
+      task.completedAt = null;
+    }
 
     await task.save();
     res.json(task);

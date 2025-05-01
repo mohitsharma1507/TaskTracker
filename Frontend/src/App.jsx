@@ -6,12 +6,14 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import CreateProject from "./pages/CreateProject";
 import ProjectTask from "./components/ProjectTask";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
+        <Route path="/" element={<Home />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
