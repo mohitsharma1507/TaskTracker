@@ -1,35 +1,35 @@
-import React, { useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
-const TaskCreationForm = ({ projectId, onTaskCreated, onCancel }) => {
-  const [newTask, setNewTask] = useState({
-    title: "",
-    description: "",
-    status: "",
-  });
+const TaskEditForm = ({ taskId, initialTask, onTaskUpdated, onCancel }) => {
+  const [task, setTask] = useState(initialTask);
   const [error, setError] = useState("");
 
-  const handleCreateTask = async () => {
+  useEffect(() => {
+    setTask(initialTask);
+  }, [initialTask]);
+
+  const handleUpdateTask = async () => {
     try {
-      const res = await axios.post(
-        `http://localhost:8080/tasks`,
-        { ...newTask, projectId },
+      const res = await axios.put(
+        `http://localhost:8080/tasks/${taskId}`,
+        task,
         {
           withCredentials: true,
         }
       );
-      onTaskCreated(res.data);
-      setNewTask({ title: "", description: "", status: "" });
-    } catch (err) {
-      console.error("Failed to create task:", err);
-      setError("Could not create task");
+      onTaskUpdated(res.data);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      setError("Could not update task");
     }
   };
 
   return (
     <div className="mb-4">
-      <h3>Create a New Task</h3>
+      <h3>Edit Task</h3>
       {error && <div className="alert alert-danger">{error}</div>}
+
       <div className="mb-3">
         <label htmlFor="taskTitle" className="form-label">
           Title
@@ -38,8 +38,8 @@ const TaskCreationForm = ({ projectId, onTaskCreated, onCancel }) => {
           type="text"
           id="taskTitle"
           className="form-control"
-          value={newTask.title}
-          onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+          value={task.title}
+          onChange={(e) => setTask({ ...task, title: e.target.value })}
         />
       </div>
       <div className="mb-3">
@@ -49,10 +49,8 @@ const TaskCreationForm = ({ projectId, onTaskCreated, onCancel }) => {
         <textarea
           id="taskDescription"
           className="form-control"
-          value={newTask.description}
-          onChange={(e) =>
-            setNewTask({ ...newTask, description: e.target.value })
-          }
+          value={task.description}
+          onChange={(e) => setTask({ ...task, description: e.target.value })}
         />
       </div>
       <div className="mb-3">
@@ -62,8 +60,8 @@ const TaskCreationForm = ({ projectId, onTaskCreated, onCancel }) => {
         <select
           id="taskStatus"
           className="form-select"
-          value={newTask.status}
-          onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
+          value={task.status}
+          onChange={(e) => setTask({ ...task, status: e.target.value })}
         >
           <option value="Pending">Pending</option>
           <option value="In Progress">In Progress</option>
@@ -72,10 +70,10 @@ const TaskCreationForm = ({ projectId, onTaskCreated, onCancel }) => {
       </div>
       <button
         className="btn btn-success"
-        onClick={handleCreateTask}
-        disabled={!newTask.title.trim()}
+        onClick={handleUpdateTask}
+        disabled={!task.title.trim()}
       >
-        Create Task
+        Update Task
       </button>
       <button className="btn btn-secondary ms-2" onClick={onCancel}>
         Cancel
@@ -83,5 +81,4 @@ const TaskCreationForm = ({ projectId, onTaskCreated, onCancel }) => {
     </div>
   );
 };
-
-export default TaskCreationForm;
+export default TaskEditForm;

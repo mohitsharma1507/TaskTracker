@@ -3,14 +3,14 @@ const Project = require("../model/project");
 
 module.exports.CreateTask = async (req, res) => {
   try {
-    const { title, description, projectId } = req.body;
+    const { title, description, status, projectId } = req.body;
 
     const project = await Project.findOne({
       _id: projectId,
       user: req.user._id,
     });
     if (!project) return res.status(404).json({ error: "Project not found" });
-    const task = new Task({ title, description, project: projectId });
+    const task = new Task({ title, description, status, project: projectId });
     await task.save();
     res.status(201).json(task);
   } catch (error) {

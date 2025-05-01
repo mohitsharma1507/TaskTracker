@@ -11,7 +11,7 @@ module.exports.CreateProject = async (req, res) => {
       .json({ error: "Maximum 4 projects allowed per user" });
   }
 
-  const project = new Project({ title, description, userId });
+  const project = new Project({ title, description, user: userId });
   await project.save();
   res.status(201).json(project);
 };
